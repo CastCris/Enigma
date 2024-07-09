@@ -32,16 +32,12 @@ class enigma{
                         }
                     }
                 }
-                std::cout<<j<<" "<<mudan[0]<<" "<<mudan[1]<<" "<<mudan[2]<<std::endl;
                 for(int i=0;i<r.size();++i){
                     cara=r[i][cara];
-                    std::cout<<cara<<" ";
                 }
                 for(int i=r.size()-1;i>=0;--i){
                     cara=r[i][cara];
-                    std::cout<<cara<<" ";
                 }
-                std::cout<<std::endl;
                 (int(cara)<33|int(cara)>121)?output.push_back('!'):output.push_back(cara);
                 r.clear();
             }
@@ -68,28 +64,3 @@ class enigma{
             }
         }
 };
-// Caso de teste
-// int main(){
-//     enigma trem;
-//     std::string coiso;
-//     int bo;
-//     while(true){
-//         std::cin>>trem.word;//ESTAMOS-VIVENDO-UM-APOCALIPSE-ZUMBI!
-//         // 
-//         std::cin.clear();
-//         std::cin.ignore(INT_MAX,'\n');
-//         // 
-//         std::getline(std::cin,coiso);
-//         char*split=std::strtok(&coiso[0]," ");
-//         for(int i=0;split!=NULL;++i){
-//             trem.mudan.push_back(std::stoi(split));
-//             split=std::strtok(NULL," ");
-//         }
-//         std::cout<<"-----------"<<std::endl;
-//         std::cin>>bo;
-//         (bo==1)?trem.criptar=true:trem.criptar=false;
-//         std::cout<<trem.cifra()<<std::endl;
-//         trem.mudan.clear();
-//     }
-//     return 0;
-// }
