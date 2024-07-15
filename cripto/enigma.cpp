@@ -16,6 +16,7 @@ O limite do tamanho da mensagem é ilimitado, porém, algumas palavras podem vim
 // 
 class history{
     public:
+        bool lcal;
         inline void armazenar(std::string letrinhas, std::string rotores, std::string alteracoes,bool modo){
             std::time_t hora = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
             his_store.push_back({});
@@ -30,7 +31,7 @@ class history{
             his_store[tam].push_back(alteracoes);
             his_store[tam].push_back(modo_1);
         }
-        inline ~history(){
+        ~history(){
             std::ofstream historico("historico.txt",std::ios::app);
             for(int tam=0;tam<int(his_store.size()/2);++tam){
                 auto aux=his_store[tam];
@@ -40,7 +41,6 @@ class history{
             for(auto ponte:his_store){
                 historico<<"########################\n";
                 for(int ponte1=0;ponte1<=ponte.size();++ponte1){
-                    std::cout<<ponte[ponte1]<<std::endl;
                     if(ponte1==0){
                         historico<<ponte[ponte1];
                     }else if(ponte1==1){
@@ -56,12 +56,38 @@ class history{
             }
             historico.close();
         }
+        void v(){
+            exibir();
+            if(!lcal){
+                std::string out_2;
+                std::ifstream historico("historico.txt");
+                while(getline(historico,out_2)){
+                    std::cout<<out_2<<std::endl;
+                }
+            }
+        }
+        void erase(){
+
+        }
+        void insert(){
+            
+        }
     private:
         std::vector<std::vector<std::string>> his_store;
         inline bool exist(){
             std::string nome="historico";
             struct stat analisar;
             return (stat (nome.c_str(),&analisar)==0);
+        }
+        void exibir(){
+            std::string out_1;
+            for(auto v_1:his_store){
+                for(int v_2=0;v_2<v_1.size();++v_2){
+                    (v_2==0)?out_1="Horário: ":(v_2==1)?out_1="Texto: ":(v_2==2)?out_1="Rotor: ":(v_2==3)?out_1="Plugin: ":(v_2==4)?out_1="Mdodo: ":out_1;
+                    out_1+=v_1[v_2];
+                    std::cout<<out_1<<std::endl;
+                }
+            }
         }
 };
 class enigma: public history{
@@ -229,6 +255,8 @@ int main(){
         std::cout<<"-----------"<<std::endl;
         std::cin>>bo;
         (bo==1)?trem.criptar=true:trem.criptar=false;
+        trem.v();
+        trem.lcal=true;
         std::cout<<trem.misterio()<<std::endl;
         trem.mudan_str.clear();
         trem.word.clear();
