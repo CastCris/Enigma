@@ -98,9 +98,9 @@ class enigma: public history{
             for(int index=0;index<max;index++){
                 r->operator[](index).clear();
                 r->insert(r->begin()+index,{});
-                for(int letra=0;letra<89;++letra){
+                for(int letra=0;letra<90;++letra){
                     splep=giragira[index]+33+letra;
-                    (splep>121)?splep-=89*int(splep/121):splep;
+                    (splep>122)?splep-=90*int(splep/122):splep;
                     if(criptar){
                         v1=letra+33;
                         v2=splep;
@@ -201,7 +201,7 @@ class enigma: public history{
                         }
                     }
                 }
-                (int(cara)<33|int(cara)>121)?output.push_back('!'):output.push_back(cara);
+                (int(cara)<33|int(cara)>122)?output.push_back('!'):output.push_back(cara);
             }
             delete r;
             r=NULL;
