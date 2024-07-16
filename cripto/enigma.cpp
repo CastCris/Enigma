@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+// 
 #include <cstring>
 // 
 #include <fstream>
@@ -33,7 +34,7 @@ class history{
             his_store[tam].push_back("Modo: "+modo_1);
         }
         ~history(){
-            std::fstream his_file("historico.txt",std::ios::out);
+            std::fstream his_file("historico.txt",std::ios::app);
             for(auto file_1:his_store){
                 his_file<<"###############################"<<std::endl;
                 for(int file_2=0;file_2<file_1.size();++file_2){
@@ -58,14 +59,21 @@ class history{
                 }
             }
         }
-        int procurar(std::vector<std::string> elemtes){
+        int procurar(std::string inp){
+            char*separar=std::strtok(&inp[0]," ");
+            std::vector<std::string> elemtes;
+            while(separar!=NULL){
+                elemtes.push_back(separar);
+                separar=std::strtok(NULL, " ");
+            }
+            delete separar;
+            separar=NULL;
+            separar=new char;
             std::ifstream his_file("historico.txt");
             std::vector<std::string> achei;
             std::string linha;
-            char*separar;
             while(std::getline(his_file,linha)){
                 separar=std::strtok(&linha[0]," ");
-                std::cout<<linha<<std::endl;
                 for(std::string proc:elemtes){
                     if(separar==proc+':'){
                         separar=std::strtok(NULL," ");
@@ -73,8 +81,6 @@ class history{
                     }
                 }
             }
-            delete separar;
-            separar=NULL;
             for(auto store_1:his_store){
                 for(auto stotre_2:store_1){
                     separar=std::strtok(&stotre_2[0]," ");
@@ -86,8 +92,15 @@ class history{
                     }
                 }
             }
-            for(std::string outt:achei){
-                std::cout<<outt<<std::endl;
+            for(int recolocar=0;recolocar<achei.size();++recolocar){
+                for(int recolocar_1=0;recolocar_1<achei[recolocar].length();++recolocar_1){
+                    if(int(achei[recolocar][recolocar_1])==95){
+                        std::cout<<" ";
+                    } else{
+                        std::cout<<achei[recolocar][recolocar_1];
+                    }
+                }
+                std::cout<<std::endl;
             }
             return 0;
         }
@@ -183,7 +196,6 @@ class enigma: public history{
                         }
                         ++quant;
                     }
-                    std::cout<<std::endl;
                 } else{
                     quant=1;
                 }
