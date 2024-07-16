@@ -1,7 +1,3 @@
-/*
-Para cada caso de teste, não é permitido colocar um número maior que 88, senão ele será subtraido até dar um número menor que 89.
-O limite do tamanho da mensagem é ilimitado, porém, algumas palavras podem vim erradas, mas não o suficiente para deixar o texto ilégivel
-*/
 #include <iostream>
 #include <map>
 #include <vector>
@@ -16,105 +12,123 @@ O limite do tamanho da mensagem é ilimitado, porém, algumas palavras podem vim
 // 
 class history{
     public:
-        bool lcal;
         inline void armazenar(std::string letrinhas, std::string rotores, std::string alteracoes,bool modo){
             std::time_t hora = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
             his_store.push_back({});
             // 
-            std::string modo_1;
+            std::string modo_1, horas;
             int tam=his_store.size()-1;
-            (modo)?modo_1="1":modo_1="0";
             // 
-            his_store[tam].push_back(std::ctime(&hora));
-            his_store[tam].push_back(letrinhas);
-            his_store[tam].push_back(rotores);
-            his_store[tam].push_back(alteracoes);
-            his_store[tam].push_back(modo_1);
+            char*horahora=std::strtok(std::ctime(&hora)," ");
+            while(horahora!=NULL){
+                horas+=horahora;
+                horas+='_';
+                horahora=std::strtok(NULL," ");
+            }
+            his_store[tam].push_back("Horario: "+horas);
+            his_store[tam].push_back("Texto: "+letrinhas);
+            his_store[tam].push_back("Rotor(es): "+rotores);
+            his_store[tam].push_back("Plugin(s): "+alteracoes);
+            (modo)?modo_1="1":modo_1="0";
+            his_store[tam].push_back("Modo: "+modo_1);
         }
         ~history(){
-            std::ofstream historico("historico.txt",std::ios::app);
-            for(int tam=0;tam<int(his_store.size()/2);++tam){
-                auto aux=his_store[tam];
-                his_store[tam]=his_store[his_store.size()-tam-1];
-                his_store[his_store.size()-tam-1]=aux;
+            std::fstream his_file("historico.txt",std::ios::out);
+            for(auto file_1:his_store){
+                his_file<<"###############################"<<std::endl;
+                for(int file_2=0;file_2<file_1.size();++file_2){
+                    his_file<<file_1[file_2]<<std::endl;
+                }
             }
-            for(auto ponte:his_store){
-                historico<<"########################\n";
-                for(int ponte1=0;ponte1<=ponte.size();++ponte1){
-                    if(ponte1==0){
-                        historico<<ponte[ponte1];
-                    }else if(ponte1==1){
-                        historico<<"Texto: "<<ponte[ponte1]<<std::endl;;
-                    } else if(ponte1==2){
-                        historico<<"Rotor: "<<ponte[ponte1]<<std::endl;
-                    } else if(ponte1==3){
-                        historico<<"Plugin: "<<ponte[ponte1]<<std::endl;
-                    } else if(ponte1==4){
-                        historico<<"Modo: "<<ponte[ponte1]<<std::endl;
+        }
+        void v(){
+            std::fstream his_file("historico.txt",std::ios::in);
+            std::string linha,outt;
+            int e=0;
+            while(std::getline(his_file,linha)){
+                std::cout<<e+1<<" "<<linha<<std::endl;
+                ++e;
+            }
+            for(auto store_1:his_store){
+                for(int store_2=0;store_2<store_1.size();++store_2){
+                    (store_2==0)?outt="Horario: ":(store_2==1)?outt="Texto: ":(store_2==2)?outt="Rotor(es): ":(store_2==3)?outt="Plugin(s)":(store_2==4)?outt="Modo: ":outt;
+                    outt+=store_1[store_2];
+                    std::cout<<e+1<<" "<<outt<<std::endl;
+                    ++e;
+                }
+            }
+        }
+        int procurar(std::vector<std::string> elemtes){
+            std::ifstream his_file("historico.txt");
+            std::vector<std::string> achei;
+            std::string linha;
+            char*separar;
+            while(std::getline(his_file,linha)){
+                separar=std::strtok(&linha[0]," ");
+                std::cout<<linha<<std::endl;
+                for(std::string proc:elemtes){
+                    if(separar==proc+':'){
+                        separar=std::strtok(NULL," ");
+                        achei.push_back(separar);
                     }
                 }
             }
-            historico.close();
-        }
-        void v(){
-            exibir();
-            if(!lcal){
-                std::string out_2;
-                std::ifstream historico("historico.txt");
-                while(getline(historico,out_2)){
-                    std::cout<<out_2<<std::endl;
+            delete separar;
+            separar=NULL;
+            for(auto store_1:his_store){
+                for(auto stotre_2:store_1){
+                    separar=std::strtok(&stotre_2[0]," ");
+                    for(auto proc:elemtes){
+                        if(separar==proc+':'){
+                            separar=std::strtok(NULL," ");
+                            achei.push_back(separar);
+                        }
+                    }
                 }
             }
-        }
-        void erase(){
-
-        }
-        void insert(){
-            
-        }
-    private:
-        std::vector<std::vector<std::string>> his_store;
-        inline bool exist(){
-            std::string nome="historico";
-            struct stat analisar;
-            return (stat (nome.c_str(),&analisar)==0);
-        }
-        void exibir(){
-            std::string out_1;
-            for(auto v_1:his_store){
-                for(int v_2=0;v_2<v_1.size();++v_2){
-                    (v_2==0)?out_1="Horário: ":(v_2==1)?out_1="Texto: ":(v_2==2)?out_1="Rotor: ":(v_2==3)?out_1="Plugin: ":(v_2==4)?out_1="Mdodo: ":out_1;
-                    out_1+=v_1[v_2];
-                    std::cout<<out_1<<std::endl;
-                }
+            for(std::string outt:achei){
+                std::cout<<outt<<std::endl;
             }
+            return 0;
         }
+        private:
+        std::vector<std::vector<std::string>>his_store;
 };
 class enigma: public history{
     public:
         bool criptar;
         std::string word, plugin,mudan_str;
         std::string misterio(){
+            std::string mudan_str_;
             redire = new std::map<char,char>;
             mudan_int= new std::vector<int>;
+            entry=new std::string;
             // 
             plu();
-            armazenar(word,mudan_str,plugin,criptar);
             // 
             char*separar=std::strtok(&mudan_str[0]," ");
             while(separar!=NULL){
                 mudan_int->push_back(atoi(separar));
+                mudan_str_+=separar;
+                mudan_str_+='_';
                 separar=std::strtok(NULL," ");
             }
             // 
-            auto retornar= cifra(*mudan_int,word,*redire);
+            for(char charecter:word){
+                (int(charecter)<33|int(charecter)>122)?entry->push_back('_'):entry->push_back(charecter);
+            } 
+            armazenar(*entry,mudan_str_,plugin,criptar);
             // 
-            delete redire, mudan_int;
+            auto retornar= cifra(*mudan_int,*entry,*redire);
+            // 
+            delete redire, mudan_int,entry;
             redire=NULL;
             mudan_int=NULL;
+            entry=NULL;
             return retornar;
         }
     private:
+        std::string *entry;
         std::vector<std::map<char, char>>*r;
         std::vector<int> *mudan_int;
         std::map<char, char>* redire;
@@ -227,39 +241,10 @@ class enigma: public history{
                         }
                     }
                 }
-                (int(cara)<33|int(cara)>122)?output.push_back('!'):output.push_back(cara);
+                (int(cara)<33|int(cara)>122)?output.push_back('!'):(int(cara)==95)?output.push_back(' '):output.push_back(cara);
             }
             delete r;
             r=NULL;
             return output;
         };
 };
-// Caso de teste
-int main(){
-    enigma trem;
-    std::string coiso;
-    int bo;
-    while(true){
-        std::cin>>trem.word;
-        if(trem.word=="p"){
-            break;
-        }
-        // 
-        std::cin.clear();
-        std::cin.ignore(INT_MAX,'\n');
-        // 
-        std::getline(std::cin,coiso);
-        trem.mudan_str=coiso;
-        std::cout<<"-----------"<<std::endl;
-        std::getline(std::cin,trem.plugin);
-        std::cout<<"-----------"<<std::endl;
-        std::cin>>bo;
-        (bo==1)?trem.criptar=true:trem.criptar=false;
-        trem.v();
-        trem.lcal=true;
-        std::cout<<trem.misterio()<<std::endl;
-        trem.mudan_str.clear();
-        trem.word.clear();
-    }
-    return 0;
-}
