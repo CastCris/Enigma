@@ -5,8 +5,6 @@
 #include <cstring>
 // 
 #include <fstream>
-#include <unistd.h>
-#include <sys/stat.h>
 // 
 #include <chrono>
 #include <ctime>
