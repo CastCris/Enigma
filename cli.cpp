@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <cstring>
+#include "cripto/enigma.cpp"
 // 
 int main(){
     std::string inp, help,out;
@@ -56,7 +57,40 @@ int main(){
             out.clear();
             help.clear();
         } else if(inp=="e"|inp=="E"){
-
+            enigma* entrada;
+            std::string entrada_1;
+            bool ver=true;
+            while(ver){
+                entrada=new enigma;
+                std::cout<<"E ";
+                std::getline(std::cin,entrada_1);
+                if(entrada_1=="p"|entrada_1=="P"){
+                    ver=false;
+                    break;
+                }else if(entrada_1=="v"|entrada_1=="V"){
+                    entrada->v();
+                }else if(entrada_1=="proc"){
+                    std::cout<<"P ";
+                    std::getline(std::cin,entrada_1);
+                    entrada->procurar(entrada_1);
+                } else{
+                    entrada->word=entrada_1;
+                    for(int trem=1;trem<4;++trem){
+                        if(trem==1){
+                            std::cout<<"R ";
+                        }else if(trem==2){
+                            std::cout<<"P ";
+                        }else if(trem==3){
+                            std::cout<<"M ";
+                        }
+                        std::getline(std::cin,entrada_1);
+                        (trem==1)?entrada->mudan_str=entrada_1:(trem==2)?  entrada->plugin=entrada_1:(trem==3)?entrada->vv=entrada_1:0;
+                    }
+                    std::cout<<"R "<<entrada->misterio()<<std::endl;
+                }
+                delete entrada;
+                entrada=NULL;
+            }
         }else if(inp=="p"|inp=="P"){
             break;
         } else{

@@ -11,26 +11,6 @@
 // 
 class history{
     public:
-        inline void armazenar(std::string letrinhas, std::string rotores, std::string alteracoes,bool modo){
-            std::time_t hora = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-            his_store.push_back({});
-            // 
-            std::string modo_1, horas;
-            int tam=his_store.size()-1;
-            // 
-            char*horahora=std::strtok(std::ctime(&hora)," ");
-            while(horahora!=NULL){
-                horas+=horahora;
-                horas+='_';
-                horahora=std::strtok(NULL," ");
-            }
-            his_store[tam].push_back("Horario: "+horas);
-            his_store[tam].push_back("Texto: "+letrinhas);
-            his_store[tam].push_back("Rotor(es): "+rotores);
-            his_store[tam].push_back("Plugin(s): "+alteracoes);
-            (modo)?modo_1="1":modo_1="0";
-            his_store[tam].push_back("Modo: "+modo_1);
-        }
         ~history(){
             std::fstream his_file("historico.txt",std::ios::app);
             for(auto file_1:his_store){
@@ -61,7 +41,7 @@ class history{
             char*separar=std::strtok(&inp[0]," ");
             std::vector<std::string> elemtes;
             while(separar!=NULL){
-                elemtes.push_back(separar);
+                (*separar=='T'|*separar=='t')?elemtes.push_back("Texto:"):(*separar=='R'|*separar=='r')?elemtes.push_back("Rotor(es):"):(*separar=='P'|*separar=='p')?elemtes.push_back("Plugin(s):"):(*separar=='M'|*separar=='m')?elemtes.push_back("Modo:"):(*separar=='H'|*separar=='h')?elemtes.push_back("Horario:"):elemtes.push_back("");
                 separar=std::strtok(NULL, " ");
             }
             delete separar;
@@ -73,7 +53,7 @@ class history{
             while(std::getline(his_file,linha)){
                 separar=std::strtok(&linha[0]," ");
                 for(std::string proc:elemtes){
-                    if(separar==proc+':'){
+                    if(separar==proc){
                         separar=std::strtok(NULL," ");
                         achei.push_back(separar);
                     }
@@ -83,7 +63,7 @@ class history{
                 for(auto stotre_2:store_1){
                     separar=std::strtok(&stotre_2[0]," ");
                     for(auto proc:elemtes){
-                        if(separar==proc+':'){
+                        if(separar==proc){
                             separar=std::strtok(NULL," ");
                             achei.push_back(separar);
                         }
@@ -91,6 +71,7 @@ class history{
                 }
             }
             for(int recolocar=0;recolocar<achei.size();++recolocar){
+                std::cout<<"==================="<<std::endl;
                 for(int recolocar_1=0;recolocar_1<achei[recolocar].length();++recolocar_1){
                     if(int(achei[recolocar][recolocar_1])==95){
                         std::cout<<" ";
@@ -102,18 +83,43 @@ class history{
             }
             return 0;
         }
+        protected:
+            inline void armazenar(std::string letrinhas, std::string rotores, std::string alteracoes,bool modo){
+                std::time_t hora = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+                his_store.push_back({});
+                // 
+                std::string modo_1, horas;
+                int tam=his_store.size()-1;
+                // 
+                char*horahora=std::strtok(std::ctime(&hora)," ");
+                while(horahora!=NULL){
+                    horas+=horahora;
+                    horas+='_';
+                    horahora=std::strtok(NULL," ");
+                }
+                his_store[tam].push_back("Horario: "+horas);
+                his_store[tam].push_back("Texto: "+letrinhas);
+                his_store[tam].push_back("Rotor(es): "+rotores);
+                his_store[tam].push_back("Plugin(s): "+alteracoes);
+                (modo)?modo_1="1":modo_1="0";
+                his_store[tam].push_back("Modo: "+modo_1);
+            }
         private:
-        std::vector<std::vector<std::string>>his_store;
+            std::vector<std::vector<std::string>>his_store;
 };
 class enigma: public history{
     public:
-        bool criptar;
-        std::string word, plugin,mudan_str;
+        std::string word, plugin,mudan_str,vv;
         std::string misterio(){
             std::string mudan_str_;
             redire = new std::map<char,char>;
             mudan_int= new std::vector<int>;
             entry=new std::string;
+            if(std::stoi(vv)==1){
+                criptar=true;
+            } else{
+                criptar=false;
+            }
             // 
             plu();
             // 
@@ -139,6 +145,7 @@ class enigma: public history{
             return retornar;
         }
     private:
+        bool criptar;
         std::string *entry;
         std::vector<std::map<char, char>>*r;
         std::vector<int> *mudan_int;
